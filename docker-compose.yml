@@ -1,0 +1,105 @@
+services:
+  user-service:
+    build:
+      context: ./services/users
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./services/users/.env
+    depends_on:
+      - redis
+      - mongodb
+      - rabbitmq
+    develop:
+      watch:
+        - action: sync
+          path: ./services/users
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
+
+  product-service:
+    build:
+      context: ./services/products
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    env_file:
+      - ./services/products/.env
+    depends_on:
+      - redis
+      - mongodb
+      - rabbitmq
+    develop:
+      watch:
+        - action: sync
+          path: ./services/orders
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
+
+  order-service:
+    build:
+      context: ./services/orders
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
+    env_file:
+      - ./services/orders/.env
+    depends_on:
+      - redis
+      - mongodb
+      - rabbitmq
+    develop:
+      watch:
+        - action: sync
+          path: ./services/orders
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  nginx-proxy:
+    build:
+      dockerfile: Dockerfile
+      context: ./proxy
+    depends_on:
+      - product-service
+      - order-service
+      - user-service
+    ports:
+      - 80:80
+  
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+  
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq 
+  
+volumes:
+  mongodb_data:
+  rabbitmq_data:
+  

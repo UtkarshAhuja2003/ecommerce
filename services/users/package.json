@@ -1,0 +1,37 @@
+{
+  "name": "users",
+  "version": "1.0.0",
+  "description": "User service",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env src/index.js",
+    "dev": "nodemon --env-file=.env src/index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UtkarshAhuja2003/ecommerce.git"
+  },
+  "author": "UtkarshAhuja2003",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UtkarshAhuja2003/ecommerce/issues"
+  },
+  "homepage": "https://github.com/UtkarshAhuja2003/ecommerce#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "graphql": "^16.9.0",
+    "graphql-http": "^1.22.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.0",
+    "redis": "^4.7.0",
+    "validator": "^13.12.0"
+  }
+}
