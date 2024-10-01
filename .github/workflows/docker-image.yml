@@ -17,6 +17,12 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
+    - name: Generate environment files for all services
+      run: |
+        cp ./services/users/.env.sample ./services/users/.env
+        cp ./services/products/.env.sample ./services/products/.env
+        cp ./services/orders/.env.sample ./services/orders/.env
+
     - name: Build Docker Compose services
       run: docker compose up --build -d
 
