@@ -1,0 +1,32 @@
+tasks:
+  - name: Install Docker
+    init: |
+      sudo apt-get update
+      sudo apt-get install -y docker.io docker-compose
+    command: |
+      cp ./services/users/.env.sample ./services/users/.env
+      cp ./services/products/.env.sample ./services/products/.env
+      cp ./services/orders/.env.sample ./services/orders/.env
+      docker-compose up --build -d
+
+ports:
+  - port: 8001
+    onOpen: ignore  # user-service
+  - port: 8002
+    onOpen: ignore  # product-service
+  - port: 8003
+    onOpen: ignore  # order-service
+  - port: 27017
+    onOpen: ignore  # MongoDB
+  - port: 6379
+    onOpen: ignore  # Redis
+  - port: 5672
+    onOpen: ignore  # RabbitMQ
+  - port: 15672
+    onOpen: ignore  # RabbitMQ Management Console
+  - port: 80
+    onOpen: open-preview  # NGINX proxy
+
+vscode:
+  extensions:
+    - ms-azuretools.vscode-docker
