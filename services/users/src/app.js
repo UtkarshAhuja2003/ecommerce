@@ -4,6 +4,7 @@ const { expressMiddleware } = require("@apollo/server/express4");
 const { connectDB } = require("./config/db");
 const typeDefs = require("./schemas/user");
 const { registerUser, loginUser, logoutUser, getAllUsers, getUser } = require("./resolvers/user");
+const { refreshAccessToken } = require("./resolvers/auth");
 
 let app;
 async function startServer() {
@@ -18,6 +19,7 @@ async function startServer() {
         registerUser,
         loginUser,
         logoutUser,
+        refreshToken: refreshAccessToken,
       },
       Query: {
         users: getAllUsers,

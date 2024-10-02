@@ -42,7 +42,8 @@ const refreshTokenRotation = async (userId, incomingRefreshToken) => {
     return refreshToken;
 };
 
-const refreshAccessToken = async (_, { refreshToken: incomingRefreshToken }) => {
+const refreshAccessToken = async (_, args) => {
+    const { incomingRefreshToken } = args.input;  
     if (!incomingRefreshToken) {
       throw new GraphQLError("Invalid refresh token");
     }

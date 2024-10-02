@@ -14,6 +14,11 @@ const typeDefs = `
         message: String
     }
 
+    type TokenPayload {
+        accessToken: String
+        refreshToken: String
+    }
+
     input RegisterInput {
         email: String!
         password: String!
@@ -29,6 +34,14 @@ const typeDefs = `
         _id: ID!
     }
 
+    input RefreshTokenInput {
+        incomingRefreshToken: String!
+    }
+
+    type Status {
+        message: String
+    }
+
     type Query {
         users: [User]
         user(_id: ID!): User
@@ -37,7 +50,8 @@ const typeDefs = `
     type Mutation {
         registerUser(input: RegisterInput!): AuthPayload
         loginUser(input: LoginInput!): AuthPayload
-        logoutUser(input: LogoutInput!): AuthPayload
+        logoutUser(input: LogoutInput!): Status
+        refreshToken(input: RefreshTokenInput!): TokenPayload
     }
 `;
 
