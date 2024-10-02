@@ -1,11 +1,11 @@
-import app from "./app.js";
+const app = require("./app");
 
 const PORT = process.env.PORT || 8002;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
 const startServer = () => {
     app.listen(PORT, () => {
-        console.log(`Products services started on Port: ${PORT} in ${NODE_ENV} Environment`);
+        console.log(`Product service started on Port: ${PORT} in ${NODE_ENV} Environment`);
     })
 }
 
