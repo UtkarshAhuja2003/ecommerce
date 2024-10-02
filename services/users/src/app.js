@@ -1,9 +1,9 @@
-import express from "express";
-import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
-import connectDB from "./config/db.js";
-import typeDefs from "./schemas/user.js";
-import { registerUser, loginUser, logoutUser, getAllUsers, getUser } from "./resolvers/user.js";
+const express = require("express");
+const { ApolloServer} = require("@apollo/server");
+const { expressMiddleware } = require("@apollo/server/express4");
+const { connectDB } = require("./config/db");
+const typeDefs = require("./schemas/user");
+const { registerUser, loginUser, logoutUser, getAllUsers, getUser } = require("./resolvers/user");
 
 let app;
 async function startServer() {
@@ -32,4 +32,4 @@ async function startServer() {
 
 startServer();
 
-export default app;
+module.exports = app;

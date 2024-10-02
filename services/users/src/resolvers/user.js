@@ -1,6 +1,6 @@
-import User from "../models/User.js";
-import { generateAccessAndRefreshTokens } from "./auth.js";
-import { GraphQLError } from "graphql";
+const { GraphQLError } = require("graphql");
+const User = require("../models/User");
+const { generateAccessAndRefreshTokens } = require("./auth");
 
 const registerUser = async(_, args) => {
     const { name, email, password } = args.input;
@@ -81,10 +81,10 @@ const getUser = async (_, args) => {
     return user;
 };
 
-export {
+module.exports = {
     registerUser,
     loginUser,
     logoutUser,
     getAllUsers,
-    getUser,
-}
+    getUser
+};

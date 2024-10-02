@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import validator from "validator";
-import jwt from "jsonwebtoken";
-import { comparePassword, hashPassword } from "../utils/password.js";
+const mongoose = require('mongoose');
+const validator = require('validator');
+const jwt = require('jsonwebtoken');
+const { hashPassword, comparePassword } = require('../utils/password');
 
 const { Schema } = mongoose;
 
@@ -66,4 +66,4 @@ userSchema.methods.generateRefreshToken = function () {
 };
 
 const User = mongoose.model('User', userSchema);
-export default User;
+module.exports = User;

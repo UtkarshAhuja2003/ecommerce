@@ -1,4 +1,4 @@
-import app from "./app.js";
+const app = require("./app");
 
 const PORT = process.env.PORT || 8001;
 const NODE_ENV = process.env.NODE_ENV || "development";

@@ -1,13 +1,13 @@
-import User from "../models/User.js";
-import jwt from "jsonwebtoken";
-import { GraphQLError } from "graphql";
+const jwt = require("jsonwebtoken");
+const { GraphQLError } = require("graphql");
+const User = require("../models/User");
 
 /**
  * Middleware to verify JWT token in GraphQL context.
  * @param {Object} context - GraphQL context object
  * @throws {Error} If the token is missing, invalid, or the user is not found.
  */
-export const verifyJWT = async (context) => {
+const verifyJWT = async (context) => {
     const token = context.req.headers.authorization?.replace("Bearer ", "") || context.token;
   
     if (!token) {
@@ -27,3 +27,5 @@ export const verifyJWT = async (context) => {
       throw new GraphQLError("Invalid access token");
     }
 };
+
+module.exports = verifyJWT;

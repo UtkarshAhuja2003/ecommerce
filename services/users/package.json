@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "User service",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start": "node --env-file=.env src/index.js",
     "dev": "nodemon --env-file=.env src/index.js",

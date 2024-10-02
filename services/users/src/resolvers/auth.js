@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken';
-import User from "../models/User.js";
-import { GraphQLError } from "graphql";
+const jwt = require('jsonwebtoken');
+const { GraphQLError } = require('graphql');
+const User = require('../models/User');
 
 const generateAccessAndRefreshTokens = async (userId) => {
     const user = await User.findById(userId);
@@ -71,7 +71,4 @@ const refreshAccessToken = async (_, { refreshToken: incomingRefreshToken }) => 
     }
 };
 
-export {
-    generateAccessAndRefreshTokens,
-    refreshAccessToken
-}
+module.exports = { generateAccessAndRefreshTokens, refreshAccessToken };

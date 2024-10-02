@@ -1,6 +1,6 @@
-import bcrypt from "bcrypt";
+const bcrypt = require('bcrypt');
 
-export const hashPassword = async function (next) {
+const hashPassword = async function (next) {
     if(!this.isModified('password'))
     {
         return next();
@@ -15,6 +15,8 @@ export const hashPassword = async function (next) {
     }
 }
 
-export const comparePassword = async (inputPassword, userPassword) => {
+const comparePassword = async (inputPassword, userPassword) => {
     return bcrypt.compare(inputPassword, userPassword);
-  };
+};
+
+module.exports = { hashPassword, comparePassword };
