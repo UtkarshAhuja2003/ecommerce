@@ -1,6 +1,7 @@
 const { GraphQLError } = require("graphql");
 const User = require("../models/User");
 const { generateAccessAndRefreshTokens } = require("./auth");
+const verifyJWT = require("../middlewares/auth");
 
 const registerUser = async(_, args) => {
     const { name, email, password } = args.input;
@@ -60,9 +61,13 @@ const loginUser = async (_, args) => {
     };
 };
 
-const logoutUser = async (_, args) => {
-    const { _id } = args.input;
-    await User.findByIdAndUpdate(_id, { refreshToken: "" });
+const logoutUser = async (_, args, context) => {
+    const user = await verifyJWT(context);
+    if(!user) {
+        throw new GraphQLError("User not found");
+    }
+
+    await User.findByIdAndUpdate(user._id, { refreshToken: "" });
     return {
         message: "User logged out successfully",
     };

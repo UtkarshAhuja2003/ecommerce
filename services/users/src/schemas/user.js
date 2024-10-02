@@ -57,8 +57,8 @@ const typeDefs = `
         loginUser(input: LoginInput!): AuthPayload
         logoutUser(input: LogoutInput!): Status
         refreshToken(input: RefreshTokenInput!): TokenPayload
-        updateUserProfile(_id: ID!, input: UpdateProfileInput!): AuthPayload
-        resetPassword(_id: ID!, currentPassword: String!, newPassword: String!): Status
+        updateUserProfile(input: UpdateProfileInput!): Status
+        resetPassword(currentPassword: String!, newPassword: String!): Status
     }
 `;
 

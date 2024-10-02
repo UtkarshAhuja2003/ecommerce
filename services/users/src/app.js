@@ -1,38 +1,21 @@
 const express = require("express");
-const { ApolloServer} = require("@apollo/server");
-const { expressMiddleware } = require("@apollo/server/express4");
 const { connectDB } = require("./config/db");
-const typeDefs = require("./schemas/user");
-const { registerUser, loginUser, logoutUser, getAllUsers, getUser } = require("./resolvers/user");
-const { refreshAccessToken } = require("./resolvers/auth");
-const { updateUserProfile, resetPassword } = require("./resolvers/userProfile");
+const createApolloServer = require("./apollo");
+const { expressMiddleware } = require("@apollo/server/express4");
 
-let app;
-async function startServer() {
-  app = express();
-  app.use(express.json());
-  connectDB();
-  
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers: {
-      Mutation: {
-        registerUser,
-        loginUser,
-        logoutUser,
-        refreshToken: refreshAccessToken,
-        updateUserProfile,
-        resetPassword
-      },
-      Query: {
-        users: getAllUsers,
-        user: getUser,
-      },
-    },
-  });
+const app = express();
+app.use(express.json());
+connectDB();
 
-  await server.start();
-  app.use("/graphql", expressMiddleware(server));
+const startServer = async () => {
+  const server = await createApolloServer();
+  app.use("/graphql", 
+    expressMiddleware(server, {
+      context: ({ req }) => {
+        return req;
+      }
+    })
+  );
 }
 
 startServer();

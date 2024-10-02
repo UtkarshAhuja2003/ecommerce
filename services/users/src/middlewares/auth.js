@@ -8,7 +8,7 @@ const User = require("../models/User");
  * @throws {Error} If the token is missing, invalid, or the user is not found.
  */
 const verifyJWT = async (context) => {
-    const token = context.req.headers.authorization?.replace("Bearer ", "") || context.token;
+    const token = context.headers.authorization?.replace("Bearer ", "") || context.token;
   
     if (!token) {
       throw new GraphQLError("Unauthorized request");
@@ -23,6 +23,7 @@ const verifyJWT = async (context) => {
       }
       
       context.user = user;
+      return user;
     } catch (error) {
       throw new GraphQLError("Invalid access token");
     }
