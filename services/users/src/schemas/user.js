@@ -24,6 +24,11 @@ const typeDefs = `
         password: String!
         name: String!
     }
+    
+    input UpdateProfileInput {
+        email: String
+        name: String
+    }
 
     input LoginInput {
         email: String!
@@ -52,6 +57,8 @@ const typeDefs = `
         loginUser(input: LoginInput!): AuthPayload
         logoutUser(input: LogoutInput!): Status
         refreshToken(input: RefreshTokenInput!): TokenPayload
+        updateUserProfile(_id: ID!, input: UpdateProfileInput!): AuthPayload
+        resetPassword(_id: ID!, currentPassword: String!, newPassword: String!): Status
     }
 `;
 

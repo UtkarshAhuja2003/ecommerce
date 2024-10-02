@@ -5,6 +5,7 @@ const { connectDB } = require("./config/db");
 const typeDefs = require("./schemas/user");
 const { registerUser, loginUser, logoutUser, getAllUsers, getUser } = require("./resolvers/user");
 const { refreshAccessToken } = require("./resolvers/auth");
+const { updateUserProfile, resetPassword } = require("./resolvers/userProfile");
 
 let app;
 async function startServer() {
@@ -20,6 +21,8 @@ async function startServer() {
         loginUser,
         logoutUser,
         refreshToken: refreshAccessToken,
+        updateUserProfile,
+        resetPassword
       },
       Query: {
         users: getAllUsers,
