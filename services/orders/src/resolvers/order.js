@@ -2,6 +2,7 @@ const { GraphQLError } = require('graphql');
 const Order = require('../models/order');
 const { validateNewOrder, validateOrderStatusUpdate } = require('../validator/order');
 const { ORDER_STATUS } = require("../constants");
+const { verifyUser } = require("../utils/verifyUser");
 
 const getAllOrders = async () => {
     try {
@@ -71,11 +72,16 @@ const getOrder = async (_, args) => {
     }
 };
 
-const placeOrder = async (_, args) => {
+const placeOrder = async (_, args, context) => {
     try {
-        const { input, userId } = args;
-        // TODO: Add user authentication logic
+        const token = context.headers.authorization?.replace("Bearer ", "") || context.token;
+        const user = await verifyUser(token);
+        if (!user) {
+            throw new GraphQLError("Unauthorized request");
+        }
+        const userId = user._id;
 
+        const { input } = args;
         const { isValid, errors } = validateNewOrder({ ...input, user: userId });
         if (!isValid) {
             throw new GraphQLError(errors.join(' '));

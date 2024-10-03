@@ -48,7 +48,7 @@ const typeDefs = `
     }
 
     type Mutation {
-        placeOrder(userId: ID!, input: OrderInput!): OrderResponse!
+        placeOrder(input: OrderInput!): OrderResponse!
         updateOrderStatus(input: UpdateOrderStatusInput!): OrderResponse!
     }
 `;

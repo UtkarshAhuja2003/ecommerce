@@ -19,6 +19,12 @@ const typeDefs = `
         refreshToken: String
     }
 
+    type VerifyUserPayload {
+        success: Boolean!
+        message: String!
+        user: User
+    }
+
     input RegisterInput {
         email: String!
         password: String!
@@ -59,6 +65,7 @@ const typeDefs = `
         refreshToken(input: RefreshTokenInput!): TokenPayload
         updateUserProfile(input: UpdateProfileInput!): Status
         resetPassword(currentPassword: String!, newPassword: String!): Status
+        verifyUser(accessToken: String!): VerifyUserPayload
     }
 `;
 

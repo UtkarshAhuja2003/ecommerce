@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { GraphQLError } = require('graphql');
 const User = require('../models/User');
+const verifyJWT = require("../middlewares/auth");
 
 const generateAccessAndRefreshTokens = async (userId) => {
     const user = await User.findById(userId);
@@ -72,4 +73,21 @@ const refreshAccessToken = async (_, args) => {
     }
 };
 
-module.exports = { generateAccessAndRefreshTokens, refreshAccessToken };
+const verifyUser = async (_, args) => {
+  try {
+    const { accessToken } = args;
+    if(!accessToken) {
+      throw new GraphQLError("Unauthorized request");
+    }
+    const user = await verifyJWT({ token: accessToken });
+    return {
+      user,
+      message: "User is authenticated",
+      success: true,
+    }
+  } catch (error) {
+    throw new GraphQLError(error.message || "Invalid access token");
+  }
+}
+
+module.exports = { generateAccessAndRefreshTokens, refreshAccessToken, verifyUser };

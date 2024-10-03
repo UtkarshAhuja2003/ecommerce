@@ -8,8 +8,17 @@ const User = require("../models/User");
  * @throws {Error} If the token is missing, invalid, or the user is not found.
  */
 const verifyJWT = async (context) => {
-    const token = context.headers.authorization?.replace("Bearer ", "") || context.token;
-  
+    let token;
+    if (!context.headers && !context.token) {
+      throw new GraphQLError("Unauthorized request");
+    }
+    else if(context.headers) {
+      token = context.headers.authorization?.replace("Bearer ", "");
+    }
+    else {
+      token = context.token;
+    }
+    
     if (!token) {
       throw new GraphQLError("Unauthorized request");
     }
