@@ -70,8 +70,6 @@ services:
     container_name: mongodb
     ports:
       - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
 
   nginx-proxy:
     build:
@@ -100,6 +98,5 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq 
   
 volumes:
-  mongodb_data:
   rabbitmq_data:
   

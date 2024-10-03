@@ -9,7 +9,7 @@ connectDB();
 
 const startServer = async () => {
   const server = await createApolloServer();
-  app.use("/graphql", 
+  app.use("/order", 
     expressMiddleware(server, {
       context: ({ req }) => {
         return req;

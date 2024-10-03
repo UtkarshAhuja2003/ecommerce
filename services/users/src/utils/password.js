@@ -1,8 +1,7 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const hashPassword = async function (next) {
-    if(!this.isModified('password'))
-    {
+    if (!this.isModified('password')) {
         return next();
     }
 
