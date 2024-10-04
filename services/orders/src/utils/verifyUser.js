@@ -20,10 +20,6 @@ const verifyUser = async (accessToken) => {
             message
             user {
               _id
-              email
-              password
-              name
-              refreshToken
             }
           }
         }`,

@@ -43,7 +43,7 @@ const typeDefs = `
 
     type Query {
         getAllOrders: OrdersResponse!
-        getUserOrders(userId: ID!): OrdersResponse!
+        getUserOrders: OrdersResponse!
         getOrder(orderId: ID!): OrderResponse!
     }
 

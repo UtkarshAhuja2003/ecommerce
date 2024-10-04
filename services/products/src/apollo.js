@@ -1,6 +1,7 @@
 const { ApolloServer} = require("@apollo/server");
 const typeDefs = require("./schemas/product");
 const { createProduct, updateProduct, updateInventory, deleteProduct, getProduct, getProducts } = require("./resolvers/product")
+const { getInventoryUpdates } = require("./utils/inventoryUpdate");
 
 const createApolloServer = async() => {
     const server = new ApolloServer({
@@ -20,6 +21,7 @@ const createApolloServer = async() => {
     });
 
     await server.start();
+    getInventoryUpdates();
     return server;
 };
 

@@ -3,6 +3,7 @@ const Order = require('../models/order');
 const { validateNewOrder, validateOrderStatusUpdate } = require('../validator/order');
 const { ORDER_STATUS } = require("../constants");
 const { verifyUser } = require("../utils/verifyUser");
+const { updateInventory } = require("../utils/inventoryUpdate");
 
 const getAllOrders = async () => {
     try {
@@ -24,11 +25,14 @@ const getAllOrders = async () => {
     }
 };
 
-const getUserOrders = async (_, args) => {
+const getUserOrders = async (_, args, context) => {
     try {
-        const { userId } = args;
-        console.log(userId);
-        // TODO: Add user authentication logic
+        const token = context.headers.authorization?.replace("Bearer ", "") || context.token;
+        const user = await verifyUser(token);
+        if (!user) {
+            throw new GraphQLError("Unauthorized request");
+        }
+        const userId = user._id;
         if (!userId) {
             throw new GraphQLError('User ID is required');
         }
@@ -87,7 +91,6 @@ const placeOrder = async (_, args, context) => {
             throw new GraphQLError(errors.join(' '));
         }
 
-        // TODO: Add product availability and inventory validation logic
 
         const newOrder = new Order({
             userId,
@@ -98,7 +101,7 @@ const placeOrder = async (_, args, context) => {
 
         const savedOrder = await newOrder.save();
 
-        // TODO: Emit "Order Placed" event and update inventory
+        updateInventory(input.products);
 
         return {
             success: true,

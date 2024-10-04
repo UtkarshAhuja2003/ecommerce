@@ -151,11 +151,35 @@ const updateInventory = async (_, args) => {
     }
 };
 
+const orderProduct = async ({productId, quantity}) => {
+    const product = await Product.findById(productId);
+    if (!product) {
+        return {
+            success: false,
+            message: 'Product not found'
+        };
+    }
+    if(product.inventory < quantity) {
+        return {
+            success: false,
+            message: 'Product out of stock'
+        };
+    }
+    product.inventory -= quantity;
+    await product.save();
+    return {
+        success: true,
+        message: 'Product ordered successfully'
+    };
+};
+
+
 module.exports = {
     createProduct,
     updateProduct,
     deleteProduct,
     getProduct,
     getProducts,
-    updateInventory
+    updateInventory,
+    orderProduct
 };
