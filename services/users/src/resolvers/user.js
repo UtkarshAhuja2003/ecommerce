@@ -4,6 +4,7 @@ const { generateAccessAndRefreshTokens } = require("./auth");
 const verifyJWT = require("../middlewares/auth");
 const { getCacheUser, getCacheUsers } = require("../utils/cacheUsers");
 const client = require("../config/redis");
+const { userRegisterEvent } = require("../utils/userEvents");
 
 const registerUser = async(_, args) => {
     const { name, email, password } = args.input;
@@ -20,6 +21,8 @@ const registerUser = async(_, args) => {
       });
     
     await user.save();
+
+    await userRegisterEvent(user);
     
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
         user._id

@@ -2,6 +2,7 @@ const { GraphQLError } = require("graphql");
 const User = require("../models/User");
 const verifyJWT = require("../middlewares/auth");
 const client = require("../config/redis");
+const { profileUpdateEvent } = require("../utils/userEvents");
 
 const updateUserProfile = async (_, args, context) => {
     const user = await verifyJWT(context);
@@ -23,6 +24,8 @@ const updateUserProfile = async (_, args, context) => {
     });
 
     await user.save();
+
+    await profileUpdateEvent(user);
 
     client.del(`user:${user._id}`);
 
