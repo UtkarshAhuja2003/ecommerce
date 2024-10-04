@@ -22,7 +22,7 @@ const createApolloServer = async() => {
     });
 
     await server.start();
-    getInventoryUpdates();
+    await getInventoryUpdates();
     return server;
 };
 

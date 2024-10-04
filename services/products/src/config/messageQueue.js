@@ -9,7 +9,7 @@ const connectRabbitMQ = async () => {
             return { connection, channel };
         }
 
-        const rabbitMQURL = process.env.RABBITMQ_URL || 'amqp://localhost';
+        const rabbitMQURL = process.env.RABBITMQ_URL || "amqp://guest:guest@rabbitmq/";
 
         return new Promise((resolve, reject) => {
             amqp.connect(rabbitMQURL, (error0, conn) => {

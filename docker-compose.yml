@@ -8,9 +8,12 @@ services:
     env_file:
       - ./services/users/.env
     depends_on:
-      - redis
-      - mongodb
-      - rabbitmq
+      rabbitmq:
+          condition: service_healthy
+      redis:
+          condition: service_healthy
+      mongodb:
+          condition: service_healthy
     develop:
       watch:
         - action: sync
@@ -30,9 +33,12 @@ services:
     env_file:
       - ./services/products/.env
     depends_on:
-      - redis
-      - mongodb
-      - rabbitmq
+      rabbitmq:
+          condition: service_healthy
+      redis:
+          condition: service_healthy
+      mongodb:
+          condition: service_healthy
     develop:
       watch:
         - action: sync
@@ -52,9 +58,12 @@ services:
     env_file:
       - ./services/orders/.env
     depends_on:
-      - redis
-      - mongodb
-      - rabbitmq
+      rabbitmq:
+          condition: service_healthy
+      redis:
+          condition: service_healthy
+      mongodb:
+          condition: service_healthy
     develop:
       watch:
         - action: sync
@@ -70,6 +79,11 @@ services:
     container_name: mongodb
     ports:
       - "27017:27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   nginx-proxy:
     build:
@@ -87,6 +101,11 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
   
   rabbitmq:
     image: rabbitmq:management
@@ -95,7 +114,12 @@ services:
       - "5672:5672"
       - "15672:15672"
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq 
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
   
 volumes:
   rabbitmq_data:
