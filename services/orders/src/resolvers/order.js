@@ -8,6 +8,7 @@ const client = require("../config/redis");
 const { getCacheOrder, getCacheOrders } = require("../utils/cacheOrders");
 const { getProductsByIDS } = require("../utils/getProducts");
 const { validateProducts } = require("../validator/products");
+const { emitOrderStatus } = require("../utils/orderStatus");
 
 const getAllOrders = async () => {
     try {
@@ -202,7 +203,7 @@ const updateOrderStatus = async (_, args) => {
         order.status = status;
         const updatedOrder = await order.save();
 
-        // TODO: Emit "Order Shipped" event if status is 'shipped'
+        await emitOrderStatus(orderId, status);
 
         client.del(`order:${orderId}`);
         return {
