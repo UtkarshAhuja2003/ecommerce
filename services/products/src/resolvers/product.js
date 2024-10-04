@@ -1,6 +1,8 @@
 const { GraphQLError } = require('graphql');
 const Product = require('../models/product');
 const { validateNewProduct } = require("../validator/product");
+const client = require("../config/redis");
+const { getCacheProduct, getCacheProducts } = require("../utils/cacheProducts");
 
 const createProduct = async (_, args) => {
     try {
@@ -54,6 +56,8 @@ const updateProduct = async (_, args) => {
             { runValidators: true, new: true }
         );
 
+        client.del(`product:${_id}`);
+
         return {
             success: true,
             message: 'Product updated successfully.',
@@ -92,10 +96,22 @@ const getProduct = async (_, args) => {
             throw new GraphQLError('Product ID is required');
         }
 
+        const redisKey = `product:${id}`;
+        const cachedProduct = await getCacheProduct(redisKey);
+        if (cachedProduct) {
+            return {
+                success: true,
+                message: 'Product found',
+                product: cachedProduct
+            };
+        }
+
         const product = await Product.findById(id);
         if (!product) {
             throw new GraphQLError('Product not found');
         }
+
+        client.setEx(redisKey, 3600, JSON.stringify(product));
 
         return {
             success: true,
@@ -110,7 +126,20 @@ const getProduct = async (_, args) => {
 
 const getProducts = async () => {
     try {
+        const redisKey = 'products:all';
+        const cachedProducts = await getCacheProducts(redisKey);
+        if (cachedProducts) {
+            return {
+                success: true,
+                message: 'Products found',
+                products: cachedProducts
+            };
+        }
+
         const products = await Product.find();
+
+        client.setEx(redisKey, 3600, JSON.stringify(products));
+
         return {
             success: true,
             message: 'Products found',
