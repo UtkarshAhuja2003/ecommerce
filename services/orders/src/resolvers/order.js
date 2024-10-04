@@ -4,9 +4,22 @@ const { validateNewOrder, validateOrderStatusUpdate } = require('../validator/or
 const { ORDER_STATUS } = require("../constants");
 const { verifyUser } = require("../utils/verifyUser");
 const { updateInventory } = require("../utils/inventoryUpdate");
+const client = require("../config/redis");
+const { getCacheOrder, getCacheOrders } = require("../utils/cacheOrders");
 
 const getAllOrders = async () => {
     try {
+        const redisKey = 'orders:all';
+        const cachedOrders = await getCacheOrders(redisKey);
+        if (cachedOrders) {
+            console.log("Orders retrieved from cache");
+            return {
+                success: true,
+                message: 'Orders retrieved successfully',
+                orders: cachedOrders
+            };
+        }
+
         const orders = await Order.find();
         if (orders.length === 0) {
             return {
@@ -15,6 +28,9 @@ const getAllOrders = async () => {
                 orders: []
             };
         }
+
+        await client.setEx(redisKey, 3600, JSON.stringify(orders));
+
         return {
             success: true,
             message: 'Orders retrieved successfully',
@@ -37,6 +53,17 @@ const getUserOrders = async (_, args, context) => {
             throw new GraphQLError('User ID is required');
         }
 
+        const redisKey = `orders:user:${userId}`;
+        const cachedOrders = await getCacheOrders(redisKey);
+        if (cachedOrders) {
+            console.log("User orders retrieved from cache");
+            return {
+                success: true,
+                message: 'User orders retrieved successfully',
+                orders: cachedOrders
+            };
+        }
+
         const orders = await Order.find({ userId });
         if (orders.length === 0) {
             return {
@@ -45,6 +72,8 @@ const getUserOrders = async (_, args, context) => {
                 orders: []
             };
         }
+
+        await client.setEx(redisKey, 3600, JSON.stringify(orders));
         return {
             success: true,
             message: 'User orders retrieved successfully',
@@ -62,10 +91,23 @@ const getOrder = async (_, args) => {
             throw new GraphQLError('Order ID is required');
         }
 
+        const redisKey = `order:${orderId}`;
+        const cachedOrder = await getCacheOrder(redisKey);
+        if (cachedOrder) {
+            console.log("Order retrieved from cache");
+            return {
+                success: true,
+                message: 'Order retrieved successfully',
+                order: cachedOrder
+            };
+        }
+
         const order = await Order.findById(orderId);
         if (!order) {
             throw new GraphQLError('Order not found');
         }
+
+        await client.setEx(redisKey, 3600, JSON.stringify(order));
         return {
             success: true,
             message: 'Order retrieved successfully',
@@ -140,6 +182,7 @@ const updateOrderStatus = async (_, args) => {
 
         // TODO: Emit "Order Shipped" event if status is 'shipped'
 
+        client.del(`order:${orderId}`);
         return {
             success: true,
             message: `Order status updated to ${status} successfully.`,
