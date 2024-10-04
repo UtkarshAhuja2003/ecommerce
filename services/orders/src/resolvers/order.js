@@ -6,6 +6,8 @@ const { verifyUser } = require("../utils/verifyUser");
 const { updateInventory } = require("../utils/inventoryUpdate");
 const client = require("../config/redis");
 const { getCacheOrder, getCacheOrders } = require("../utils/cacheOrders");
+const { getProductsByIDS } = require("../utils/getProducts");
+const { validateProducts } = require("../validator/products");
 
 const getAllOrders = async () => {
     try {
@@ -133,11 +135,31 @@ const placeOrder = async (_, args, context) => {
             throw new GraphQLError(errors.join(' '));
         }
 
+        const productIds = input.products.map(product => product.productId);
+        
+        const products = await getProductsByIDS(productIds);
+        const { isValid: isValidProducts, errors: productErrors } = await validateProducts(input.products, products);
+        if (!isValidProducts) {
+            throw new GraphQLError(productErrors.join(' '));
+        }
+
+        const productMap = new Map(products.map(product => [product._id.toString(), product]));
+
+        const productsWithPrice = input.products.map(inputProduct => {
+            const product = productMap.get(inputProduct.productId);
+            if (!product) {
+                throw new GraphQLError(`Product with ID ${inputProduct.productId} not found.`);
+            }
+
+            return {
+                ...inputProduct,
+                priceAtPurchase: product.price
+            };
+        });
 
         const newOrder = new Order({
             userId,
-            products: input.products,
-            totalAmount: input.totalAmount,
+            products: productsWithPrice,
             status: ORDER_STATUS.PLACED
         });
 

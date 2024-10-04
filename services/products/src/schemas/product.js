@@ -44,6 +44,7 @@ const typeDefs = `
     type Query {
         getProduct(id: ID!): ProductResponse!
         getProducts: ProductsResponse!
+        getProductsByIDS(ids: [ID!]!): ProductsResponse!
     }
 
     type Mutation {

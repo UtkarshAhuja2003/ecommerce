@@ -9,6 +9,7 @@ async function updateInventory(products) {
         const res = await orderProduct({ productId, quantity });
         if(!res.success) {
             console.error(`Failed to update inventory for product: ${productId}`);
+            console.error(res.message);
         }
     }
 }

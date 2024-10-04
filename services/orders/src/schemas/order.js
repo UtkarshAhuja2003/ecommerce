@@ -3,7 +3,6 @@ const typeDefs = `
         _id: ID!
         userId: ID!
         products: [OrderProduct!]!
-        totalAmount: Float!
         status: String!
     }
 
@@ -16,12 +15,10 @@ const typeDefs = `
     input OrderProductInput {
         productId: ID!
         quantity: Int!
-        priceAtPurchase: Float!
     }
 
     input OrderInput {
         products: [OrderProductInput!]!
-        totalAmount: Float!
     }
 
     input UpdateOrderStatusInput {

@@ -17,16 +17,8 @@ function validateNewOrder(order) {
             if (typeof product.quantity !== 'number' || product.quantity <= 0) {
                 errors.push(`Product quantity must be a positive number for product at index ${index}.`);
             }
-            if (typeof product.priceAtPurchase !== 'number' || product.priceAtPurchase < 0) {
-                errors.push(`Product price must be a non-negative number for product at index ${index}.`);
-            }
         });
     }
-
-    if (typeof order.totalAmount !== 'number' || order.totalAmount < 0) {
-        errors.push('Total price is required and should be a non-negative number.');
-    }
-
     return {
         isValid: errors.length === 0,
         errors

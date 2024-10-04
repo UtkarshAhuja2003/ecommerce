@@ -151,6 +151,53 @@ const getProducts = async () => {
     }
 };
 
+const getProductsByIDS = async (_, args) => {
+    try {
+        const { ids } = args;
+        if (!Array.isArray(ids)) {
+            throw new GraphQLError('Product IDs must be provided in an array');
+        }
+        if (ids.length === 0) {
+            throw new GraphQLError('No product IDs provided');
+        }
+
+        const validIds = ids.filter(id => id && typeof id === 'string');
+        if (validIds.length === 0) {
+            throw new GraphQLError('No valid product IDs found');
+        }
+
+        const products = await Product.find({ _id: { $in: validIds } });
+
+        if (products.length === 0) {
+            return {
+                success: false,
+                message: 'No products found',
+                products
+            }
+        }
+
+        const foundIds = products.map(p => p._id.toString());
+        const notFoundIds = validIds.filter(id => !foundIds.includes(id));
+        if (notFoundIds.length > 0) {
+            return {
+                success: false,
+                message: `Some products not found: ${notFoundIds.join(', ')}`,
+                products
+            };
+        }
+
+        return {
+            success: true,
+            message: 'All products found successfully',
+            products
+        };
+
+    } catch (error) {
+        throw new GraphQLError(error.message || 'Internal server error');
+    }
+};
+
+
 const updateInventory = async (_, args) => {
     try {
         const { _id, inventory } = args;
@@ -210,5 +257,6 @@ module.exports = {
     getProduct,
     getProducts,
     updateInventory,
-    orderProduct
+    orderProduct,
+    getProductsByIDS
 };

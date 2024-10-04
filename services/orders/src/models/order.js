@@ -29,15 +29,6 @@ const orderSchema = new Schema({
       }
     }
   ],
-  totalAmount: {
-    type: Number,
-    required: [true, 'Total order amount is required'],
-    min: [0, 'Total amount cannot be negative'],
-    validate: {
-      validator: Number.isFinite,
-      message: 'Total amount must be a valid number'
-    }
-  },
   status: {
     type: String,
     required: [true, 'Order status is required'],

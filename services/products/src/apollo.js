@@ -1,6 +1,6 @@
 const { ApolloServer} = require("@apollo/server");
 const typeDefs = require("./schemas/product");
-const { createProduct, updateProduct, updateInventory, deleteProduct, getProduct, getProducts } = require("./resolvers/product")
+const { createProduct, updateProduct, updateInventory, deleteProduct, getProduct, getProducts, getProductsByIDS } = require("./resolvers/product")
 const { getInventoryUpdates } = require("./utils/inventoryUpdate");
 
 const createApolloServer = async() => {
@@ -9,7 +9,8 @@ const createApolloServer = async() => {
         resolvers: {
             Query: {
                 getProduct,
-                getProducts
+                getProducts,
+                getProductsByIDS
             },
             Mutation: {
                 createProduct,
