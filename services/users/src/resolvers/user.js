@@ -2,6 +2,8 @@ const { GraphQLError } = require("graphql");
 const User = require("../models/User");
 const { generateAccessAndRefreshTokens } = require("./auth");
 const verifyJWT = require("../middlewares/auth");
+const { getCacheUser, getCacheUsers } = require("../utils/cacheUsers");
+const client = require("../config/redis");
 
 const registerUser = async(_, args) => {
     const { name, email, password } = args.input;
@@ -74,16 +76,43 @@ const logoutUser = async (_, args, context) => {
 };
 
 const getAllUsers = async () => {
-    return await User.find();
+    try {
+        const redisKey = "users:all";
+        const cachedUsers = await getCacheUsers(redisKey);
+        if(cachedUsers) {
+            console.log("Fetching users from cache");
+            return cachedUsers;
+        }
+
+        const users = await User.find();
+        client.setEx(redisKey, 3600, JSON.stringify(users));
+
+        return users;
+    } catch (error) {
+      throw new GraphQLError("Error fetching users");   
+    }
 };
 
 const getUser = async (_, args) => {
-    const { _id } = args;
-    const user = await User.findById(_id);
-    if (!user) {
-        throw new Error("User not found");
+    try {
+        const { _id } = args;
+        const redisKey = `user:${_id}`;
+        const cachedUser = await getCacheUser(redisKey);
+        if(cachedUser) {
+            console.log("Fetching user from cache");
+            return cachedUser;
+        }
+
+        const user = await User.findById(_id);
+        if (!user) {
+            throw new GraphQLError("User not found");
+        }
+        
+        client.setEx(redisKey, 3600, JSON.stringify(user));
+        return user;
+    } catch (error) {
+        throw new GraphQLError("Error fetching user");
     }
-    return user;
 };
 
 module.exports = {
