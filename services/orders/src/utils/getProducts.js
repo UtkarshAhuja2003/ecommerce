@@ -5,7 +5,7 @@ const getProductsByIDS = async (productIDs) => {
         }
 
         const variables = { ids: productIDs };
-        const PRODUCT_SERVICE_URL = "http://localhost:8002/product";
+        const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || "http://product-service:8002/product";
 
         const response = await fetch(PRODUCT_SERVICE_URL, {
             method: "POST",

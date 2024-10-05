@@ -6,7 +6,7 @@ const verifyUser = async (accessToken) => {
     }
 
     const variables = { accessToken };
-    const USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://localhost:8001/user";
+    const USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://user-service:8001/user";
 
     const response = await fetch(USER_SERVICE_URL, {
       method: "POST",
